@@ -1,0 +1,92 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using PB.CommonModel;
+using PB.EntityFramework;
+using PB.Identity.Repository;
+using PB.Identity.Tables;
+using PB.Shared;
+using PB.Shared.Models;
+using PB.Shared.Tables;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
+
+namespace PB.Server.Controllers
+{
+
+    [Route("api/media")]
+    [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    public class MediaController : ControllerBase
+    {
+        private readonly IDbContext _dbContext;
+        private readonly IMediaRepository _media;
+        private readonly IHostEnvironment _hostEnvironment;
+
+        public MediaController(IDbContext dbContext, IMediaRepository media, IHostEnvironment hostEnvironment)
+        {
+            _dbContext = dbContext;
+            _media = media;
+            _hostEnvironment = hostEnvironment;
+        }
+
+        [HttpGet("get")]
+        public async Task<IActionResult> Get(int id)
+        {
+            var fileName = await _dbContext.GetByQueryAsync<string>($@"SELECT  FileName
+                FROM  Media
+                Where MediaID={id}");
+            return Ok(new StringModel() { Data = fileName });
+        }
+
+        [DisableRequestSizeLimit]
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadImage(FileUploadModel model)
+        {
+            var id = await _media.SaveMedia(model);
+            return Ok(id);
+        }
+
+        [HttpPost("get-images")]
+        public async Task<IActionResult> GetAllWhatsAppAccounts(PagedListPostModel model)
+        {
+            string imagePath = Path.Combine(_hostEnvironment.ContentRootPath, "wwwroot");
+            PagedListQueryModel searchdata = model;
+            searchdata.Select = $"select MediaID,concat('{imagePath}',FileName)URL,Title,FileName from Media ";
+            searchdata.WhereCondition = "Title is NOT NULL and IsDeleted=0";
+            var res = await _dbContext.GetPagedList<GalleryModel>(searchdata);
+            
+            
+            return Ok(res);
+        }
+        [HttpGet("delete-image")]
+        public async Task<IActionResult> DeleteImage(int id)
+        {
+            await _dbContext.DeleteAsync<Media>(id);
+            return Ok(new Success());
+        }
+
+        [HttpGet("get-gallery-image")]
+        public async Task<IActionResult> GetGalleryImage(int id)
+        {
+            var res = await _dbContext.GetAsync<MediaCustom>(id);
+            return Ok(res);
+        }
+        [HttpPost("save")]
+        public async Task<IActionResult> Save(MediaCustom model)
+        {
+            var media = await _dbContext.GetAsync<MediaCustom>(model.MediaID.Value);
+            media.Title = model.Title;
+            await _dbContext.SaveAsync(media);
+            return Ok(new Success());
+
+        }
+
+    }
+}

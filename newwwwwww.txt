@@ -1,0 +1,7 @@
+ //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum dolor sit amet consectetur adipisicing elit.a dolor voluptatem blanditiis corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum dolor sit corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum dolor elit.a dolor voluptatem blanditiis corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum consectetur adipisicing elit.a dolor voluptatem blanditiis corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum consectetur adipisicing elit.a dolor voluptatem blanditiis corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum consectetur adipisicing elit.a dolor voluptatem blanditiis corpori </p>
+                                    //<p class='desc-sec'><span>&#9675</span> Lorem, ipsum consectetur adipisicing elit.a dolor voluptatem blanditiis corpori </p>
